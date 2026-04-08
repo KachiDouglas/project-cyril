@@ -1,0 +1,228 @@
+'use client'
+
+import { useToast } from '@/modules/common/components/toast'
+import Button from '@/modules/common/components/buttons'
+import FieldGroup from '@/modules/auth/components/common/FieldGroup'
+import { EyeIcon, LockIcon, MailIcon } from '@/modules/auth/components/common/icons'
+import Input from '@/modules/common/components/input'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+
+type RegisterFormState = {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  dateOfBirth: string
+}
+
+type RegisterFormErrors = Partial<Record<keyof RegisterFormState, string>> & {
+  form?: string
+}
+
+const initialState: RegisterFormState = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  dateOfBirth: '',
+}
+
+const validate = (values: RegisterFormState): RegisterFormErrors => {
+  const errors: RegisterFormErrors = {}
+
+  if (values.firstName.trim().length < 2) {
+    errors.firstName = 'First name must be at least 2 characters long.'
+  }
+
+  if (values.lastName.trim().length < 2) {
+    errors.lastName = 'Last name must be at least 2 characters long.'
+  }
+
+  if (!values.email.trim()) {
+    errors.email = 'Email is required.'
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+    errors.email = 'Enter a valid email address.'
+  }
+
+  if (values.password.length < 8) {
+    errors.password = 'Password must be at least 8 characters long.'
+  }
+
+  if (!values.dateOfBirth) {
+    errors.dateOfBirth = 'Date of birth is required.'
+  }
+
+  return errors
+}
+
+const RegisterForm = () => {
+  const router = useRouter()
+  const { showToast } = useToast()
+  const [values, setValues] = useState<RegisterFormState>(initialState)
+  const [errors, setErrors] = useState<RegisterFormErrors>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+
+    setValues((current) => ({ ...current, [name]: value }))
+    setErrors((current) => ({ ...current, [name]: undefined, form: undefined }))
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const validationErrors = validate(values)
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      showToast({
+        title: 'Registration failed',
+        description: 'Please check the highlighted fields and try again.',
+        variant: 'error',
+      })
+      return
+    }
+
+    try {
+      setIsSubmitting(true)
+      setErrors({})
+
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+
+      const payload = (await response.json()) as { error?: string; message?: string }
+
+      if (!response.ok) {
+        setErrors({ form: payload.error ?? 'Unable to create account.' })
+        showToast({
+          title: 'Registration failed',
+          description: payload.error ?? 'Unable to create account.',
+          variant: 'error',
+        })
+        return
+      }
+
+      showToast({
+        title: 'Account created',
+        description: payload.message ?? 'Your registration was successful.',
+        variant: 'success',
+      })
+      setValues(initialState)
+      window.setTimeout(() => {
+        router.push('/login?registered=1')
+      }, 1200)
+    } catch {
+      setErrors({ form: 'Unable to create account.' })
+      showToast({
+        title: 'Registration failed',
+        description: 'Unable to create account.',
+        variant: 'error',
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FieldGroup htmlFor="firstName" label="First Name">
+          <Input
+            id="firstName"
+            name="firstName"
+            value={values.firstName}
+            onChange={handleChange}
+            variant="secondary"
+            fullWidth
+            placeholder="Enter your first name"
+            autoComplete="given-name"
+            disabled={isSubmitting}
+          />
+          {errors.firstName ? <p className="mt-1 text-xs text-red-600">{errors.firstName}</p> : null}
+        </FieldGroup>
+
+        <FieldGroup htmlFor="lastName" label="Last Name">
+          <Input
+            id="lastName"
+            name="lastName"
+            value={values.lastName}
+            onChange={handleChange}
+            variant="secondary"
+            fullWidth
+            placeholder="Enter your last name"
+            autoComplete="family-name"
+            disabled={isSubmitting}
+          />
+          {errors.lastName ? <p className="mt-1 text-xs text-red-600">{errors.lastName}</p> : null}
+        </FieldGroup>
+      </div>
+
+      <FieldGroup htmlFor="email" label="Email Address">
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          value={values.email}
+          onChange={handleChange}
+          variant="secondary"
+          fullWidth
+          maxWidth={530}
+          placeholder="your.name@organisation.gov.uk"
+          leftIcon={<MailIcon className="h-4 w-4" />}
+          autoComplete="email"
+          disabled={isSubmitting}
+        />
+        {errors.email ? <p className="mt-1 text-xs text-red-600">{errors.email}</p> : null}
+      </FieldGroup>
+
+      <FieldGroup htmlFor="password" label="Password">
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          value={values.password}
+          onChange={handleChange}
+          variant="secondary"
+          fullWidth
+          maxWidth={530}
+          placeholder="Enter your password"
+          leftIcon={<LockIcon className="h-4 w-4" />}
+          rightIcon={<EyeIcon className="h-4 w-4" />}
+          autoComplete="new-password"
+          disabled={isSubmitting}
+        />
+        {errors.password ? <p className="mt-1 text-xs text-red-600">{errors.password}</p> : null}
+      </FieldGroup>
+
+      <FieldGroup htmlFor="dateOfBirth" label="Date of Birth">
+        <Input
+          id="dateOfBirth"
+          name="dateOfBirth"
+          type="date"
+          value={values.dateOfBirth}
+          onChange={handleChange}
+          variant="secondary"
+          fullWidth
+          maxWidth={530}
+          disabled={isSubmitting}
+        />
+        {errors.dateOfBirth ? <p className="mt-1 text-xs text-red-600">{errors.dateOfBirth}</p> : null}
+      </FieldGroup>
+
+      {errors.form ? <p className="text-sm text-red-600">{errors.form}</p> : null}
+
+      <Button type="submit" variant="primary" fullWidth maxWidth={530} loading={isSubmitting}>
+        Create Account
+      </Button>
+    </form>
+  )
+}
+
+export default RegisterForm
