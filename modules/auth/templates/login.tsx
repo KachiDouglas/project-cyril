@@ -5,6 +5,7 @@ import AuthShell from '@/modules/auth/components/common/AuthShell'
 import Link from 'next/link'
 import React from 'react'
 import LoginForm from '@/modules/auth/components/login/login-form'
+import { Suspense } from 'react'
 
 const LoginTemplate = () => {
   return (
@@ -12,7 +13,9 @@ const LoginTemplate = () => {
       <AuthHeader />
 
       <AuthCard description="Sign in to access the assessment platform. This system is for authorised safeguarding professionals only.">
-        <LoginForm />
+        <Suspense fallback={null}>
+          <LoginForm />
+        </Suspense>
 
           <p className="text-center text-sm text-slate-600">
             New user?{' '}

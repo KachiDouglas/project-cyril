@@ -2,9 +2,7 @@
 import React from 'react'
 
 const Hero = () => {
-  return (
-    
-  )
+  return null
 }
 
 export default Hero
