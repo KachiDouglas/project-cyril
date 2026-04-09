@@ -1,16 +1,18 @@
 'use client'
 
-import { useToast } from '@/modules/common/components/toast'
 import Button from '@/modules/common/components/buttons'
-import FieldGroup from '@/modules/auth/components/common/FieldGroup'
+import { useToast } from '@/modules/common/components/toast'
+import FieldGroup from '@/modules/auth/components/common/field-group'
 import { EyeIcon, LockIcon, MailIcon } from '@/modules/auth/components/common/icons'
 import Input from '@/modules/common/components/input'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import { API_ROUTES, APP_ROUTES, buildAppRoute } from '@/lib/routes'
 
 type RegisterFormState = {
   firstName: string
   lastName: string
+  role: string
   email: string
   password: string
   dateOfBirth: string
@@ -23,6 +25,7 @@ type RegisterFormErrors = Partial<Record<keyof RegisterFormState, string>> & {
 const initialState: RegisterFormState = {
   firstName: '',
   lastName: '',
+  role: '',
   email: '',
   password: '',
   dateOfBirth: '',
@@ -37,6 +40,10 @@ const validate = (values: RegisterFormState): RegisterFormErrors => {
 
   if (values.lastName.trim().length < 2) {
     errors.lastName = 'Last name must be at least 2 characters long.'
+  }
+
+  if (values.role.trim().length < 2) {
+    errors.role = 'Role must be at least 2 characters long.'
   }
 
   if (!values.email.trim()) {
@@ -89,7 +96,7 @@ const RegisterForm = () => {
       setIsSubmitting(true)
       setErrors({})
 
-      const response = await fetch('/api/register', {
+      const response = await fetch(API_ROUTES.register, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +123,7 @@ const RegisterForm = () => {
       })
       setValues(initialState)
       window.setTimeout(() => {
-        router.push('/login?registered=1')
+        router.push(buildAppRoute(APP_ROUTES.login, { registered: 1 }))
       }, 1200)
     } catch {
       setErrors({ form: 'Unable to create account.' })
@@ -163,6 +170,22 @@ const RegisterForm = () => {
           {errors.lastName ? <p className="mt-1 text-xs text-red-600">{errors.lastName}</p> : null}
         </FieldGroup>
       </div>
+
+      <FieldGroup htmlFor="role" label="Role">
+        <Input
+          id="role"
+          name="role"
+          value={values.role}
+          onChange={handleChange}
+          variant="secondary"
+          fullWidth
+          maxWidth={530}
+          placeholder="e.g. Senior Practitioner"
+          autoComplete="organization-title"
+          disabled={isSubmitting}
+        />
+        {errors.role ? <p className="mt-1 text-xs text-red-600">{errors.role}</p> : null}
+      </FieldGroup>
 
       <FieldGroup htmlFor="email" label="Email Address">
         <Input

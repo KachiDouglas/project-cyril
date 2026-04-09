@@ -14,6 +14,7 @@ const readFormPayload = async (request: Request): Promise<RegisterPayload> => {
 	return {
 		firstName: formData.get('firstName')?.toString(),
 		lastName: formData.get('lastName')?.toString(),
+		role: formData.get('role')?.toString(),
 		email: formData.get('email')?.toString(),
 		password: formData.get('password')?.toString(),
 		dateOfBirth: formData.get('dateOfBirth')?.toString(),

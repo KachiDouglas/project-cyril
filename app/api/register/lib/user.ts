@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import prisma from '@/lib/config/prisma'
 import type { RegisterInput, RegisterUser } from './types'
 import { hashPassword } from './password'
 
@@ -21,6 +21,7 @@ export const createRegisteredUser = async (input: RegisterInput): Promise<Regist
 		data: {
 			firstName: input.firstName,
 			lastName: input.lastName,
+			role: input.role,
 			email: normalizedEmail,
 			passwordHash,
 			dateOfBirth: parsedDateOfBirth,
@@ -29,6 +30,7 @@ export const createRegisteredUser = async (input: RegisterInput): Promise<Regist
 			id: true,
 			firstName: true,
 			lastName: true,
+			role: true,
 			email: true,
 			dateOfBirth: true,
 			createdAt: true,

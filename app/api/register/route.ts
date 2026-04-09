@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createSessionToken, setSessionCookie } from '@/modules/auth/session'
+import { createSessionToken, setSessionCookie } from '@/lib/session'
 import { createRegisteredUser } from './lib/user'
 import { readRegisterPayload } from './lib/request'
 import { validateRegisterPayload } from './lib/validation'
@@ -24,6 +24,7 @@ export async function POST(request: Request) {
 			email: user.email,
 			firstName: user.firstName,
 			lastName: user.lastName,
+			role: user.role,
 		})
 
 		const response = NextResponse.json(

@@ -1,5 +1,6 @@
 import React from 'react'
-import { ShieldIcon } from './icons'
+
+import { ShieldIcon } from '../icons'
 
 const AuthHeader = () => {
   return (

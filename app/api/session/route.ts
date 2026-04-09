@@ -1,4 +1,4 @@
-import { clearSessionCookie, getSessionCookieName, verifySessionToken } from '@/modules/auth/session'
+import { clearSessionCookie, getSessionCookieName, verifySessionToken } from '@/lib/session'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {

@@ -9,14 +9,15 @@ export const validateRegisterPayload = (
 ): { success: true; data: RegisterInput } | { success: false; error: string } => {
 	const firstName = toTrimmedString(payload.firstName)
 	const lastName = toTrimmedString(payload.lastName)
+	const role = toTrimmedString(payload.role)
 	const email = toTrimmedString(payload.email).toLowerCase()
 	const password = payload.password?.trim() ?? ''
 	const dateOfBirth = toTrimmedString(payload.dateOfBirth)
 
-	if (!firstName || !lastName || !email || !password || !dateOfBirth) {
+	if (!firstName || !lastName || !role || !email || !password || !dateOfBirth) {
 		return {
 			success: false,
-			error: 'firstName, lastName, email, password, and dateOfBirth are required.',
+			error: 'firstName, lastName, role, email, password, and dateOfBirth are required.',
 		}
 	}
 
@@ -31,6 +32,13 @@ export const validateRegisterPayload = (
 		return {
 			success: false,
 			error: 'lastName must be at least 2 characters long.',
+		}
+	}
+
+	if (role.length < 2) {
+		return {
+			success: false,
+			error: 'role must be at least 2 characters long.',
 		}
 	}
 
@@ -69,6 +77,7 @@ export const validateRegisterPayload = (
 		data: {
 			firstName,
 			lastName,
+			role,
 			email,
 			password,
 			dateOfBirth,

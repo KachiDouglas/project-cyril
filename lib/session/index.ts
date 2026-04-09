@@ -6,6 +6,7 @@ type SessionTokenPayload = {
 	email: string
 	firstName: string
 	lastName: string
+	role: string
 }
 
 export type SessionUser = {
@@ -13,10 +14,15 @@ export type SessionUser = {
 	email: string
 	firstName: string
 	lastName: string
+	role: string
 }
 
 type SessionOptions = {
 	keepSignedIn?: boolean
+}
+
+type SessionCookieStore = {
+	get: (name: string) => { value?: string } | undefined
 }
 
 const SESSION_COOKIE_NAME = 'auth_token'
@@ -43,6 +49,7 @@ export const createSessionToken = (user: SessionUser, options?: SessionOptions) 
 		email: user.email,
 		firstName: user.firstName,
 		lastName: user.lastName,
+		role: user.role,
 	}
 
 	const expiresIn = resolveSessionDuration(options)
@@ -57,7 +64,7 @@ export const verifySessionToken = (token: string): SessionUser | null => {
 	try {
 		const decoded = jwt.verify(token, getJwtSecret()) as jwt.JwtPayload & SessionTokenPayload
 
-		if (!decoded?.sub || !decoded?.email || !decoded?.firstName || !decoded?.lastName) {
+		if (!decoded?.sub || !decoded?.email || !decoded?.firstName || !decoded?.lastName || !decoded?.role) {
 			return null
 		}
 
@@ -66,10 +73,21 @@ export const verifySessionToken = (token: string): SessionUser | null => {
 			email: decoded.email,
 			firstName: decoded.firstName,
 			lastName: decoded.lastName,
+			role: decoded.role,
 		}
 	} catch {
 		return null
 	}
+}
+
+export const getSessionUserFromCookies = (cookieStore: SessionCookieStore): SessionUser | null => {
+	const token = cookieStore.get(getSessionCookieName())?.value
+
+	if (!token) {
+		return null
+	}
+
+	return verifySessionToken(token)
 }
 
 export const setSessionCookie = (response: NextResponse, token: string, options?: SessionOptions) => {

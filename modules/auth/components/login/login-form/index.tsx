@@ -1,10 +1,11 @@
 'use client'
 
-import { useToast } from '@/modules/common/components/toast'
 import Button from '@/modules/common/components/buttons'
-import FieldGroup from '@/modules/auth/components/common/FieldGroup'
+import { useToast } from '@/modules/common/components/toast'
+import FieldGroup from '@/modules/auth/components/common/field-group'
 import { EyeIcon, LockIcon, MailIcon } from '@/modules/auth/components/common/icons'
 import Input from '@/modules/common/components/input'
+import { API_ROUTES, APP_ROUTES } from '@/lib/routes'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -88,7 +89,7 @@ const LoginForm = () => {
 			setIsSubmitting(true)
 			setErrors({})
 
-			const response = await fetch('/api/login', {
+			const response = await fetch(API_ROUTES.login, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ const LoginForm = () => {
 			})
 
 			window.setTimeout(() => {
-				router.push('/')
+				router.push(APP_ROUTES.dashboard)
 			}, 1000)
 		} catch {
 			setErrors({ form: 'Unable to sign in.' })

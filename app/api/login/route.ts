@@ -1,6 +1,6 @@
-import prisma from '@/lib/prisma'
+import prisma from '@/lib/config/prisma'
 import { NextResponse } from 'next/server'
-import { createSessionToken, setSessionCookie } from '@/modules/auth/session'
+import { createSessionToken, setSessionCookie } from '@/lib/session'
 import { pbkdf2 as pbkdf2Callback, timingSafeEqual } from 'node:crypto'
 import { promisify } from 'node:util'
 
@@ -96,6 +96,7 @@ export async function POST(request: Request) {
 			email: user.email,
 			firstName: user.firstName,
 			lastName: user.lastName,
+			role: user.role,
 			},
 			{ keepSignedIn }
 		)
@@ -107,6 +108,7 @@ export async function POST(request: Request) {
 					id: user.id,
 					firstName: user.firstName,
 					lastName: user.lastName,
+					role: user.role,
 					email: user.email,
 				},
 			},

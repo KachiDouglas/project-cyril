@@ -16,6 +16,7 @@ model User {
   id           String   @id @default(cuid())
   firstName    String
   lastName     String
+  role         String   @default("Senior Practitioner")
   email        String   @unique
   passwordHash String
   dateOfBirth  DateTime
