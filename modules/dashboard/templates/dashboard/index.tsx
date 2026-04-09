@@ -88,7 +88,7 @@ const activeCases = [
     createdAt: '2026-02-26',
   },
   {
-    caseId: 'CP-2026-0036',
+    caseId: 'CP-2026-0035',
     riskLabel: 'Low Risk',
     riskTone: 'low' as const,
     statusLabel: 'Completed',
