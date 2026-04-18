@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import AccessRouteToastListener from "@/modules/common/components/toast/access-route-toast-listener";
 import { ToastProvider } from "@/modules/common/components/toast";
+import { Suspense } from "react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,7 +31,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <Suspense fallback={null}>
+            <AccessRouteToastListener />
+          </Suspense>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );

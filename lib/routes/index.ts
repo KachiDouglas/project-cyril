@@ -7,6 +7,15 @@ export const APP_ROUTES = {
 	register: '/register',
 } as const
 
+export type AppRouteAccess = 'public' | 'protected' | 'guest-only'
+
+export const APP_ROUTE_ACCESS: Record<(typeof APP_ROUTES)[keyof typeof APP_ROUTES], AppRouteAccess> = {
+	[APP_ROUTES.home]: 'public',
+	[APP_ROUTES.dashboard]: 'protected',
+	[APP_ROUTES.login]: 'guest-only',
+	[APP_ROUTES.register]: 'guest-only',
+}
+
 export const API_ROUTES = {
 	login: '/api/login',
 	register: '/api/register',
@@ -33,4 +42,35 @@ export const buildAppRoute = (path: string, query?: RouteQuery) => {
 	const queryString = searchParams.toString()
 
 	return queryString ? `${path}?${queryString}` : path
+}
+
+const normalizePath = (pathname: string) => {
+	if (pathname.length > 1 && pathname.endsWith('/')) {
+		return pathname.slice(0, -1)
+	}
+
+	return pathname
+}
+
+const matchesRoute = (pathname: string, route: string) => {
+	const normalizedPath = normalizePath(pathname)
+	const normalizedRoute = normalizePath(route)
+
+	if (normalizedPath === normalizedRoute) {
+		return true
+	}
+
+	return normalizedPath.startsWith(`${normalizedRoute}/`)
+}
+
+export const getAppRouteAccess = (pathname: string): AppRouteAccess => {
+	const matchedEntry = Object.entries(APP_ROUTE_ACCESS).find(([route]) => {
+		return matchesRoute(pathname, route)
+	})
+
+	if (!matchedEntry) {
+		return 'public'
+	}
+
+	return matchedEntry[1]
 }

@@ -1,5 +1,11 @@
-import LoginTemplate from '@/modules/auth/templates/login'
+import { getSessionUserFromCookies } from '@/lib/security/session'
+import HomeTemplate from '@/modules/home/templates'
+import { cookies } from 'next/headers'
 
-export default function Home() {
-  return <LoginTemplate />
+const HomePage = async () => {
+  const sessionUser = getSessionUserFromCookies(await cookies())
+
+  return <HomeTemplate sessionUser={sessionUser} />
 }
+
+export default HomePage

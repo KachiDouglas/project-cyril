@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken'
 import type { NextResponse } from 'next/server'
+import { signToken, verifyToken } from '@/lib/security/token'
 
 type SessionTokenPayload = {
 	sub: string
@@ -33,16 +33,6 @@ const resolveSessionDuration = (options?: SessionOptions) => {
 	return options?.keepSignedIn ? LONG_SESSION_DURATION_SECONDS : SHORT_SESSION_DURATION_SECONDS
 }
 
-const getJwtSecret = () => {
-	const secret = process.env.JWT_SECRET
-
-	if (!secret) {
-		throw new Error('JWT_SECRET is not set.')
-	}
-
-	return secret
-}
-
 export const createSessionToken = (user: SessionUser, options?: SessionOptions) => {
 	const payload: SessionTokenPayload = {
 		sub: user.id,
@@ -54,29 +44,24 @@ export const createSessionToken = (user: SessionUser, options?: SessionOptions) 
 
 	const expiresIn = resolveSessionDuration(options)
 
-	return jwt.sign(payload, getJwtSecret(), {
-		algorithm: 'HS256',
-		expiresIn,
+	return signToken(payload as Record<string, unknown>, {
+		expiresInSeconds: expiresIn,
 	})
 }
 
 export const verifySessionToken = (token: string): SessionUser | null => {
-	try {
-		const decoded = jwt.verify(token, getJwtSecret()) as jwt.JwtPayload & SessionTokenPayload
+	const decoded = verifyToken<SessionTokenPayload>(token)
 
-		if (!decoded?.sub || !decoded?.email || !decoded?.firstName || !decoded?.lastName || !decoded?.role) {
-			return null
-		}
-
-		return {
-			id: decoded.sub,
-			email: decoded.email,
-			firstName: decoded.firstName,
-			lastName: decoded.lastName,
-			role: decoded.role,
-		}
-	} catch {
+	if (!decoded?.sub || !decoded?.email || !decoded?.firstName || !decoded?.lastName || !decoded?.role) {
 		return null
+	}
+
+	return {
+		id: decoded.sub,
+		email: decoded.email,
+		firstName: decoded.firstName,
+		lastName: decoded.lastName,
+		role: decoded.role,
 	}
 }
 

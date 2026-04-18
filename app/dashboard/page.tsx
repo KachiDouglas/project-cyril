@@ -1,16 +1,12 @@
-import { getSessionUserFromCookies } from '@/lib/session'
-import DashboardTemplate from '@/modules/dashboard/templates/dashboard'
 import { APP_ROUTES } from '@/lib/routes'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { requireAuthenticatedUser } from '@/lib/security/session/guards'
+import DashboardTemplate from '@/modules/dashboard/templates/dashboard'
 import React from 'react'
 
 const DashboardPage = async () => {
-	const sessionUser = getSessionUserFromCookies(await cookies())
-
-	if (!sessionUser) {
-		redirect(APP_ROUTES.login)
-	}
+	const sessionUser = await requireAuthenticatedUser({
+		nextPathname: APP_ROUTES.dashboard,
+	})
 
   return (
     <DashboardTemplate sessionUser={sessionUser} />

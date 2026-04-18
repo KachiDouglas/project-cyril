@@ -2,8 +2,10 @@
 
 import Button from '@/modules/common/components/buttons'
 import { useToast } from '@/modules/common/components/toast'
+import SocialAuthButtons from '@/modules/auth/components/common/social-auth-buttons'
 import FieldGroup from '@/modules/auth/components/common/field-group'
 import { EyeIcon, LockIcon, MailIcon } from '@/modules/auth/components/common/icons'
+import type { SocialAuthProvider } from '@/modules/auth/config/social-auth-providers'
 import Input from '@/modules/common/components/input'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -137,8 +139,28 @@ const RegisterForm = () => {
     }
   }
 
+  const handleSocialAuth = (provider: SocialAuthProvider) => {
+    showToast({
+      title: `${provider.label} registration is not configured yet`,
+      description: 'Please use the registration form for now.',
+      variant: 'info',
+      duration: 2000,
+    })
+  }
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+      <SocialAuthButtons intentLabel="Create account" onProviderClick={handleSocialAuth} disabled={isSubmitting} />
+
+      <div className="relative py-1">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-slate-200" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase tracking-[0.12em] text-slate-400">
+          <span className="bg-white px-2">Or continue with details</span>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FieldGroup htmlFor="firstName" label="First Name">
           <Input

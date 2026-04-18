@@ -2,8 +2,10 @@
 
 import Button from '@/modules/common/components/buttons'
 import { useToast } from '@/modules/common/components/toast'
+import SocialAuthButtons from '@/modules/auth/components/common/social-auth-buttons'
 import FieldGroup from '@/modules/auth/components/common/field-group'
 import { EyeIcon, LockIcon, MailIcon } from '@/modules/auth/components/common/icons'
+import type { SocialAuthProvider } from '@/modules/auth/config/social-auth-providers'
 import Input from '@/modules/common/components/input'
 import { API_ROUTES, APP_ROUTES } from '@/lib/routes'
 import Link from 'next/link'
@@ -130,8 +132,28 @@ const LoginForm = () => {
 		}
 	}
 
+	const handleSocialAuth = (provider: SocialAuthProvider) => {
+		showToast({
+			title: `${provider.label} sign in is not configured yet`,
+			description: 'Please use email and password for now.',
+			variant: 'info',
+			duration: 2000,
+		})
+	}
+
 	return (
 		<form className="space-y-4" onSubmit={handleSubmit} noValidate>
+			<SocialAuthButtons intentLabel="Sign in" onProviderClick={handleSocialAuth} disabled={isSubmitting} />
+
+			<div className="relative py-1">
+				<div className="absolute inset-0 flex items-center">
+					<div className="w-full border-t border-slate-200" />
+				</div>
+				<div className="relative flex justify-center text-xs uppercase tracking-[0.12em] text-slate-400">
+					<span className="bg-white px-2">Or continue with email</span>
+				</div>
+			</div>
+
 			<FieldGroup htmlFor="email" label="Email Address">
 				<Input
 					id="email"

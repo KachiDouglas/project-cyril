@@ -1,7 +1,7 @@
 import DashboardAlertsPanel from '@/modules/dashboard/components/dashboard-alerts-panel'
 import DashboardCasesPanel from '@/modules/dashboard/components/dashboard-cases-panel'
 import DashboardFooter from '@/modules/dashboard/components/dashboard-footer'
-import type { SessionUser } from '@/lib/session'
+import type { SessionUser } from '@/lib/security/session'
 import {
   AssessmentIcon,
   AnalyticsIcon,

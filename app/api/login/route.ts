@@ -1,10 +1,7 @@
 import prisma from '@/lib/config/prisma'
 import { NextResponse } from 'next/server'
-import { createSessionToken, setSessionCookie } from '@/lib/session'
-import { pbkdf2 as pbkdf2Callback, timingSafeEqual } from 'node:crypto'
-import { promisify } from 'node:util'
-
-const pbkdf2 = promisify(pbkdf2Callback)
+import { createSessionToken, setSessionCookie } from '@/lib/security/session'
+import { verifyPassword } from '@/lib/security/password'
 
 type LoginPayload = {
 	email?: string
@@ -43,24 +40,6 @@ const readPayload = async (request: Request): Promise<LoginPayload> => {
 		password: formData.get('password')?.toString(),
 		keepSignedIn: formData.get('keepSignedIn')?.toString(),
 	}
-}
-
-const verifyPassword = async (password: string, storedHash: string) => {
-	const [salt, hash] = storedHash.split(':')
-
-	if (!salt || !hash) {
-		return false
-	}
-
-	const derivedKey = (await pbkdf2(password, salt, 310000, 32, 'sha512')) as Buffer
-	const expected = Buffer.from(hash, 'hex')
-	const actual = Buffer.from(derivedKey.toString('hex'), 'hex')
-
-	if (expected.length !== actual.length) {
-		return false
-	}
-
-	return timingSafeEqual(expected, actual)
 }
 
 export async function POST(request: Request) {

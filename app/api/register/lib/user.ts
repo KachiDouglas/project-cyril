@@ -1,6 +1,6 @@
 import prisma from '@/lib/config/prisma'
 import type { RegisterInput, RegisterUser } from './types'
-import { hashPassword } from './password'
+import { hashPassword } from '@/lib/security/password'
 
 const toDate = (value: string) => new Date(`${value}T00:00:00.000Z`)
 

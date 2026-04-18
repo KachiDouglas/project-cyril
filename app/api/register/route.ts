@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createSessionToken, setSessionCookie } from '@/lib/session'
+import { createSessionToken, setSessionCookie } from '@/lib/security/session'
 import { createRegisteredUser } from './lib/user'
 import { readRegisterPayload } from './lib/request'
 import { validateRegisterPayload } from './lib/validation'
