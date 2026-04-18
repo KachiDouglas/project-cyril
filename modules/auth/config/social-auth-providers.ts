@@ -1,4 +1,4 @@
-export type SocialAuthProviderId = 'google' | 'microsoft' | 'github'
+import type { SocialAuthProviderId } from '@/lib/security/social-auth/types'
 
 export type SocialAuthProvider = {
 	id: SocialAuthProviderId
@@ -7,6 +7,4 @@ export type SocialAuthProvider = {
 
 export const SOCIAL_AUTH_PROVIDERS: SocialAuthProvider[] = [
 	{ id: 'google', label: 'Google' },
-	{ id: 'microsoft', label: 'Microsoft' },
-	{ id: 'github', label: 'GitHub' },
 ]

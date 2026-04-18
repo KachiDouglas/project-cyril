@@ -6,6 +6,7 @@ import SocialAuthButtons from '@/modules/auth/components/common/social-auth-butt
 import FieldGroup from '@/modules/auth/components/common/field-group'
 import { EyeIcon, LockIcon, MailIcon } from '@/modules/auth/components/common/icons'
 import type { SocialAuthProvider } from '@/modules/auth/config/social-auth-providers'
+import { beginSocialAuth } from '@/modules/auth/lib/social-auth-client'
 import Input from '@/modules/common/components/input'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -139,13 +140,23 @@ const RegisterForm = () => {
     }
   }
 
-  const handleSocialAuth = (provider: SocialAuthProvider) => {
-    showToast({
-      title: `${provider.label} registration is not configured yet`,
-      description: 'Please use the registration form for now.',
-      variant: 'info',
-      duration: 2000,
-    })
+  const handleSocialAuth = async (provider: SocialAuthProvider) => {
+    setIsSubmitting(true)
+
+    const socialAuthResult = await beginSocialAuth(provider.id, 'signup')
+
+    if (!socialAuthResult.success) {
+      showToast({
+        title: `${provider.label} registration unavailable`,
+        description: socialAuthResult.error,
+        variant: 'info',
+        duration: 2000,
+      })
+      setIsSubmitting(false)
+      return
+    }
+
+    window.location.assign(socialAuthResult.authorizationUrl)
   }
 
   return (

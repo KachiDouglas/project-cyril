@@ -18,32 +18,7 @@ const GoogleIcon = () => (
 	</svg>
 )
 
-const MicrosoftIcon = () => (
-	<svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-		<rect x="3" y="3" width="8.5" height="8.5" fill="#F25022" />
-		<rect x="12.5" y="3" width="8.5" height="8.5" fill="#7FBA00" />
-		<rect x="3" y="12.5" width="8.5" height="8.5" fill="#00A4EF" />
-		<rect x="12.5" y="12.5" width="8.5" height="8.5" fill="#FFB900" />
-	</svg>
-)
-
-const GitHubIcon = () => (
-	<svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-		<path d="M12 2A10 10 0 0 0 8.84 21.5c.5.1.66-.21.66-.48v-1.69c-2.77.6-3.35-1.18-3.35-1.18-.45-1.14-1.1-1.44-1.1-1.44-.9-.62.07-.61.07-.61 1 .07 1.53 1.02 1.53 1.02.88 1.5 2.32 1.07 2.88.82.09-.64.35-1.07.63-1.31-2.21-.25-4.53-1.1-4.53-4.9 0-1.08.39-1.96 1.03-2.65-.1-.25-.45-1.28.1-2.67 0 0 .84-.27 2.75 1.01A9.5 9.5 0 0 1 12 6.84c.85 0 1.7.12 2.5.35 1.9-1.28 2.74-1.01 2.74-1.01.56 1.4.21 2.42.1 2.67.64.7 1.03 1.57 1.03 2.65 0 3.81-2.33 4.64-4.55 4.88.36.31.68.93.68 1.88v2.76c0 .27.17.59.67.48A10 10 0 0 0 12 2z" />
-	</svg>
-)
-
-const getProviderIcon = (providerId: SocialAuthProvider['id']) => {
-	if (providerId === 'google') {
-		return <GoogleIcon />
-	}
-
-	if (providerId === 'microsoft') {
-		return <MicrosoftIcon />
-	}
-
-	return <GitHubIcon />
-}
+const getProviderIcon = (_providerId: SocialAuthProvider['id']) => <GoogleIcon />
 
 const SocialAuthButtons = ({ intentLabel, onProviderClick, disabled = false }: SocialAuthButtonsProps) => {
 	return (

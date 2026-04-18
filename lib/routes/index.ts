@@ -5,6 +5,8 @@ export const APP_ROUTES = {
 	dashboard: '/dashboard',
 	login: '/login',
 	register: '/register',
+	authCallback: '/auth/callback',
+	authCodeError: '/auth/auth-code-error',
 } as const
 
 export type AppRouteAccess = 'public' | 'protected' | 'guest-only'
@@ -14,12 +16,15 @@ export const APP_ROUTE_ACCESS: Record<(typeof APP_ROUTES)[keyof typeof APP_ROUTE
 	[APP_ROUTES.dashboard]: 'protected',
 	[APP_ROUTES.login]: 'guest-only',
 	[APP_ROUTES.register]: 'guest-only',
+	[APP_ROUTES.authCallback]: 'public',
+	[APP_ROUTES.authCodeError]: 'public',
 }
 
 export const API_ROUTES = {
 	login: '/api/login',
 	register: '/api/register',
 	session: '/api/session',
+	socialAuthGoogle: '/api/auth/social/google',
 } as const
 
 export type RouteQuery = Record<string, RouteQueryValue>
@@ -74,3 +79,5 @@ export const getAppRouteAccess = (pathname: string): AppRouteAccess => {
 
 	return matchedEntry[1]
 }
+
+export const getGoogleSocialAuthRoute = () => API_ROUTES.socialAuthGoogle
